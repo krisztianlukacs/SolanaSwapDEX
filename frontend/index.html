@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SolanaSwapDEX</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="logo.svg" type="image/svg+xml">
+</head>
+<body>
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <img src="logo.svg" alt="SolanaSwapDEX" class="sidebar-logo">
+            <span class="sidebar-title">SolanaSwapDEX</span>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="#dashboard" class="nav-item active" data-page="dashboard">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="3" width="7" height="7" rx="1"/>
+                    <rect x="14" y="3" width="7" height="7" rx="1"/>
+                    <rect x="3" y="14" width="7" height="7" rx="1"/>
+                    <rect x="14" y="14" width="7" height="7" rx="1"/>
+                </svg>
+                <span>Dashboard</span>
+            </a>
+            <a href="#portfolio" class="nav-item" data-page="portfolio">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 12V7H5a2 2 0 010-4h14v4"/>
+                    <path d="M3 5v14a2 2 0 002 2h16v-5"/>
+                    <path d="M18 12a2 2 0 000 4h4v-4h-4z"/>
+                </svg>
+                <span>Portfolio</span>
+            </a>
+            <a href="#transactions" class="nav-item" data-page="transactions">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/>
+                </svg>
+                <span>Transactions</span>
+            </a>
+            <a href="#settings" class="nav-item" data-page="settings">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="3"/>
+                    <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+                </svg>
+                <span>Settings</span>
+            </a>
+        </nav>
+        <div class="sidebar-footer">
+            <div class="strategy-badge" id="strategyBadge">
+                <span class="strategy-dot"></span>
+                <span>Strategy Active</span>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Top Bar -->
+        <header class="topbar">
+            <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle menu">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 12h18M3 6h18M3 18h18"/>
+                </svg>
+            </button>
+            <div class="topbar-spacer"></div>
+            <div class="wallet-section" id="walletSection">
+                <button class="btn btn-primary" id="connectWalletBtn">Connect Wallet</button>
+            </div>
+        </header>
+
+        <!-- Page: Dashboard -->
+        <section class="page" id="page-dashboard">
+            <h1 class="page-title">Dashboard</h1>
+
+            <!-- Metric Cards -->
+            <div class="metrics-grid" id="dashboardMetrics"></div>
+
+            <!-- Charts -->
+            <div class="charts-grid">
+                <div class="card chart-card chart-card-wide">
+                    <div class="card-header">
+                        <h3>PnL Over Time</h3>
+                        <div class="chart-toggles" id="pnlToggles">
+                            <button class="toggle-btn" data-range="7">7D</button>
+                            <button class="toggle-btn" data-range="30">30D</button>
+                            <button class="toggle-btn active" data-range="90">90D</button>
+                            <button class="toggle-btn" data-range="all">ALL</button>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="pnlChart"></canvas>
+                    </div>
+                </div>
+                <div class="card chart-card">
+                    <div class="card-header">
+                        <h3>Asset Allocation</h3>
+                    </div>
+                    <div class="chart-container chart-container-square">
+                        <canvas id="allocationChart"></canvas>
+                    </div>
+                </div>
+                <div class="card chart-card">
+                    <div class="card-header">
+                        <h3>Trade Volume (30D)</h3>
+                    </div>
+                    <div class="chart-container chart-container-square">
+                        <canvas id="volumeChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Strategy Status -->
+            <div class="card" id="strategyStatus">
+                <div class="card-header">
+                    <h3>Strategy Status</h3>
+                </div>
+                <div class="strategy-info" id="strategyInfo"></div>
+            </div>
+        </section>
+
+        <!-- Page: Portfolio -->
+        <section class="page hidden" id="page-portfolio">
+            <h1 class="page-title">Portfolio</h1>
+            <div class="portfolio-grid" id="portfolioGrid"></div>
+        </section>
+
+        <!-- Page: Transactions -->
+        <section class="page hidden" id="page-transactions">
+            <h1 class="page-title">Transactions</h1>
+            <div class="card">
+                <!-- Filters -->
+                <div class="tx-filters" id="txFilters">
+                    <div class="filter-group">
+                        <label>Type</label>
+                        <select id="filterType">
+                            <option value="all">All Types</option>
+                            <option value="SOL_TO_USDC">SOL &rarr; USDC</option>
+                            <option value="USDC_TO_SOL">USDC &rarr; SOL</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>Status</label>
+                        <select id="filterStatus">
+                            <option value="all">All Statuses</option>
+                            <option value="confirmed">Confirmed</option>
+                            <option value="pending">Pending</option>
+                            <option value="failed">Failed</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>From</label>
+                        <input type="date" id="filterDateFrom">
+                    </div>
+                    <div class="filter-group">
+                        <label>To</label>
+                        <input type="date" id="filterDateTo">
+                    </div>
+                    <button class="btn btn-secondary" id="exportCsvBtn">Export CSV</button>
+                </div>
+
+                <!-- Table -->
+                <div class="table-wrapper">
+                    <table class="tx-table" id="txTable">
+                        <thead>
+                            <tr>
+                                <th data-sort="date" class="sortable sorted-desc">Date <span class="sort-arrow">&#9662;</span></th>
+                                <th data-sort="type" class="sortable">Type <span class="sort-arrow"></span></th>
+                                <th data-sort="amountIn" class="sortable">Amount In <span class="sort-arrow"></span></th>
+                                <th data-sort="amountOut" class="sortable">Amount Out <span class="sort-arrow"></span></th>
+                                <th>Slippage</th>
+                                <th>Fee</th>
+                                <th data-sort="status" class="sortable">Status <span class="sort-arrow"></span></th>
+                                <th>Tx Signature</th>
+                            </tr>
+                        </thead>
+                        <tbody id="txTableBody"></tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                <div class="pagination" id="txPagination">
+                    <div class="pagination-info" id="paginationInfo"></div>
+                    <div class="pagination-controls">
+                        <select id="pageSize">
+                            <option value="10">10 per page</option>
+                            <option value="25" selected>25 per page</option>
+                            <option value="50">50 per page</option>
+                        </select>
+                        <button class="btn btn-sm" id="prevPage">&laquo; Prev</button>
+                        <span id="pageIndicator"></span>
+                        <button class="btn btn-sm" id="nextPage">Next &raquo;</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Page: Settings -->
+        <section class="page hidden" id="page-settings">
+            <h1 class="page-title">Settings</h1>
+            <div class="settings-grid" id="settingsGrid"></div>
+        </section>
+    </main>
+
+    <!-- Modal Overlay -->
+    <div class="modal-overlay hidden" id="modalOverlay">
+        <div class="modal" id="modalContent"></div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="mock-data.js"></script>
+    <script src="app.js"></script>
+    <script src="wallet.js"></script>
+    <script src="charts.js"></script>
+    <script src="dashboard.js"></script>
+    <script src="portfolio.js"></script>
+    <script src="transactions.js"></script>
+    <script src="settings.js"></script>
+</body>
+</html>
