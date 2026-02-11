@@ -20,33 +20,66 @@ const Charts = {
         Chart.defaults.font.family = "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
     },
 
-    // ===== PnL Line Chart =====
+    // ===== PnL Line Chart (3 lines, dual Y-axis) =====
     createPnlChart() {
         const ctx = document.getElementById('pnlChart').getContext('2d');
         const data = this.getPnlData(this.currentRange);
 
         const gradient = ctx.createLinearGradient(0, 0, 0, 300);
-        gradient.addColorStop(0, 'rgba(139, 92, 246, 0.3)');
+        gradient.addColorStop(0, 'rgba(139, 92, 246, 0.2)');
         gradient.addColorStop(1, 'rgba(139, 92, 246, 0.0)');
 
         this.pnlChart = new Chart(ctx, {
             type: 'line',
             data: {
                 labels: data.labels,
-                datasets: [{
-                    label: 'Cumulative PnL ($)',
-                    data: data.values,
-                    borderColor: '#8b5cf6',
-                    backgroundColor: gradient,
-                    borderWidth: 2,
-                    fill: true,
-                    tension: 0.4,
-                    pointRadius: 0,
-                    pointHoverRadius: 6,
-                    pointHoverBackgroundColor: '#8b5cf6',
-                    pointHoverBorderColor: '#fff',
-                    pointHoverBorderWidth: 2,
-                }],
+                datasets: [
+                    {
+                        label: 'Total PnL ($)',
+                        data: data.totalValues,
+                        borderColor: '#8b5cf6',
+                        backgroundColor: gradient,
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 0,
+                        pointHoverRadius: 6,
+                        pointHoverBackgroundColor: '#8b5cf6',
+                        pointHoverBorderColor: '#fff',
+                        pointHoverBorderWidth: 2,
+                        yAxisID: 'y',
+                    },
+                    {
+                        label: 'USDC Profit ($)',
+                        data: data.usdcValues,
+                        borderColor: '#10b981',
+                        borderWidth: 2,
+                        borderDash: [6, 3],
+                        fill: false,
+                        tension: 0.4,
+                        pointRadius: 0,
+                        pointHoverRadius: 5,
+                        pointHoverBackgroundColor: '#10b981',
+                        pointHoverBorderColor: '#fff',
+                        pointHoverBorderWidth: 2,
+                        yAxisID: 'y',
+                    },
+                    {
+                        label: 'SOL Profit (SOL)',
+                        data: data.solValues,
+                        borderColor: '#f59e0b',
+                        borderWidth: 2,
+                        borderDash: [6, 3],
+                        fill: false,
+                        tension: 0.4,
+                        pointRadius: 0,
+                        pointHoverRadius: 5,
+                        pointHoverBackgroundColor: '#f59e0b',
+                        pointHoverBorderColor: '#fff',
+                        pointHoverBorderWidth: 2,
+                        yAxisID: 'ySol',
+                    },
+                ],
             },
             options: {
                 responsive: true,
@@ -56,7 +89,17 @@ const Charts = {
                     intersect: false,
                 },
                 plugins: {
-                    legend: { display: false },
+                    legend: {
+                        display: true,
+                        position: 'top',
+                        align: 'end',
+                        labels: {
+                            usePointStyle: true,
+                            pointStyle: 'circle',
+                            padding: 16,
+                            font: { size: 11 },
+                        },
+                    },
                     tooltip: {
                         backgroundColor: '#1f2937',
                         titleColor: '#f9fafb',
@@ -64,9 +107,14 @@ const Charts = {
                         borderColor: '#374151',
                         borderWidth: 1,
                         padding: 12,
-                        displayColors: false,
+                        displayColors: true,
                         callbacks: {
-                            label: (ctx) => `PnL: $${ctx.parsed.y.toLocaleString('en-US', { minimumFractionDigits: 2 })}`,
+                            label: (ctx) => {
+                                if (ctx.datasetIndex === 2) {
+                                    return `${ctx.dataset.label}: ${ctx.parsed.y.toLocaleString('en-US', { minimumFractionDigits: 4 })} SOL`;
+                                }
+                                return `${ctx.dataset.label}: $${ctx.parsed.y.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
+                            },
                         },
                     },
                 },
@@ -76,9 +124,17 @@ const Charts = {
                         ticks: { maxTicksLimit: 8 },
                     },
                     y: {
+                        position: 'left',
                         grid: { color: 'rgba(31, 41, 55, 0.5)' },
                         ticks: {
                             callback: (v) => '$' + v.toLocaleString(),
+                        },
+                    },
+                    ySol: {
+                        position: 'right',
+                        grid: { drawOnChartArea: false },
+                        ticks: {
+                            callback: (v) => v.toLocaleString('en-US', { maximumFractionDigits: 2 }) + ' SOL',
                         },
                     },
                 },
@@ -96,7 +152,9 @@ const Charts = {
                 const date = new Date(d.date);
                 return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
             }),
-            values: history.map(d => d.cumulativePnl),
+            totalValues: history.map(d => d.cumulativePnl),
+            usdcValues: history.map(d => d.cumulativeUsdcPnl),
+            solValues: history.map(d => d.cumulativeSolPnl),
         };
     },
 
@@ -106,12 +164,14 @@ const Charts = {
 
         const ctx = document.getElementById('pnlChart').getContext('2d');
         const gradient = ctx.createLinearGradient(0, 0, 0, 300);
-        gradient.addColorStop(0, 'rgba(139, 92, 246, 0.3)');
+        gradient.addColorStop(0, 'rgba(139, 92, 246, 0.2)');
         gradient.addColorStop(1, 'rgba(139, 92, 246, 0.0)');
 
         this.pnlChart.data.labels = data.labels;
-        this.pnlChart.data.datasets[0].data = data.values;
+        this.pnlChart.data.datasets[0].data = data.totalValues;
         this.pnlChart.data.datasets[0].backgroundColor = gradient;
+        this.pnlChart.data.datasets[1].data = data.usdcValues;
+        this.pnlChart.data.datasets[2].data = data.solValues;
         this.pnlChart.update();
     },
 

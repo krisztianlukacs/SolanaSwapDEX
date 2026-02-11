@@ -57,6 +57,21 @@ const Dashboard = {
                 value: App.formatUsd(pnl.allTimePnl),
                 sub: `+${pnl.allTimePnlPercent}% return`,
                 subClass: 'positive',
+                cardClass: 'total-pnl',
+            },
+            {
+                label: 'SOL Profit',
+                value: `${pnl.allTimeSolPnl.toLocaleString('en-US', { minimumFractionDigits: 4 })} SOL`,
+                sub: `+${((pnl.allTimeSolPnl / 5) * 100).toFixed(1)}% return`,
+                subClass: 'positive',
+                cardClass: 'sol-pnl',
+            },
+            {
+                label: 'USDC Profit',
+                value: `${pnl.allTimeUsdcPnl.toLocaleString('en-US', { minimumFractionDigits: 2 })} USDC`,
+                sub: `+${((pnl.allTimeUsdcPnl / 1200) * 100).toFixed(1)}% return`,
+                subClass: 'positive',
+                cardClass: 'usdc-pnl',
             },
             {
                 label: 'Last Execution',
@@ -67,7 +82,7 @@ const Dashboard = {
         ];
 
         container.innerHTML = metrics.map(m => `
-            <div class="metric-card">
+            <div class="metric-card${m.cardClass ? ' ' + m.cardClass : ''}">
                 <div class="metric-label">${m.label}</div>
                 <div class="metric-value">${m.value}</div>
                 <div class="metric-sub ${m.subClass}">${m.sub}</div>

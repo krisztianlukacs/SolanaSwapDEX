@@ -308,6 +308,18 @@ body {
     transform: translateY(-2px);
 }
 
+.metric-card.total-pnl {
+    border-left: 3px solid var(--accent-purple);
+}
+
+.metric-card.sol-pnl {
+    border-left: 3px solid var(--accent-yellow);
+}
+
+.metric-card.usdc-pnl {
+    border-left: 3px solid var(--accent-green);
+}
+
 .metric-label {
     font-size: 0.85rem;
     color: var(--text-secondary);
