@@ -7,6 +7,14 @@ Users have two wallet amounts: SOL and USDC (or USDT). The algorithm can generat
 From March 2025 to November 2025, we generated 11.5% monthly USDC profit on USDC AUM.
 From November 2025 to February 2026, we generated 40% SOL profit on SOL AUM.
 
+## Related Documentation
+
+- [Frontend Documentation](frontend.md): Details the user interface functionalities.
+- [Backend (Python) Documentation](backend-python.md): Describes the backend services and logic.
+- [Relayer/Executor Documentation](executor.md): Explains the relayer/executor responsibilities.
+- [On-chain (Rust Program) Documentation](onchain.md): Covers the on-chain program logic and integrations.
+- [Data/Index Documentation](dataindex.md): Outlines the data storage and indexing mechanisms.
+
 ## 1. User Profile (Configuration & State)
 
 **Role:** Per-user settings and state management. All other blocks read from this profile.
