@@ -21,6 +21,8 @@ SolanaSwapDEX is a modular and efficient strategy execution system for rotating 
 - [Data/Index Documentation](documentation/dataindex.md)
 - [Monitoring Documentation](documentation/monitoring.md)
 
+![Transactions](documentation/Transactions.png)
+
 ## License
 This project is licensed under the **MIT License**. You are free to use, modify, and distribute this code, provided that:
 1. You reference this repository (https://github.com/krisztianlukacs/SolanaSwapDEX) in your project.
