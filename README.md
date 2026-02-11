@@ -10,6 +10,8 @@ SolanaSwapDEX is a modular and efficient strategy execution system for rotating 
 - **Data/Indexing**: PostgreSQL database and indexer service for user state and history.
 - **Monitoring**: Comprehensive tools to ensure relayer uptime, key security, and abuse prevention.
 
+![Dashboard](documentation/Dashboard.png)
+
 ## Documentation
 - [Concept Overview](documentation/concept.md)
 - [Frontend Documentation](documentation/frontend.md)
